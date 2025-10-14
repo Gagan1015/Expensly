@@ -45,12 +45,6 @@ RUN npm install && npm run build
 # Create SQLite database
 RUN touch /var/www/html/database/database.sqlite
 
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache \
-    && chmod 664 /var/www/html/database/database.sqlite
-
 # Generate application key
 RUN php artisan key:generate --force
 
@@ -61,5 +55,13 @@ RUN php artisan migrate --force
 RUN php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
+
+# Set proper permissions - CRITICAL: Do this LAST to ensure all files have correct permissions
+# SQLite needs write access to both the database file AND the directory
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/database \
+    && chmod 666 /var/www/html/database/database.sqlite
 
 CMD ["apache2-foreground"]
