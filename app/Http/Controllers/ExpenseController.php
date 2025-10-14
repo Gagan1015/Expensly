@@ -262,8 +262,9 @@ class ExpenseController extends Controller
             ->get();
 
         // Monthly spending trend (last 6 months)
+        // Use SQLite-compatible date functions
         $monthlyTrend = $user->expenses()
-            ->selectRaw('YEAR(date) as year, MONTH(date) as month, SUM(amount) as total')
+            ->selectRaw("strftime('%Y', date) as year, strftime('%m', date) as month, SUM(amount) as total")
             ->where('date', '>=', now()->subMonths(6))
             ->groupBy('year', 'month')
             ->orderBy('year')
