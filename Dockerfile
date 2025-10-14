@@ -1,8 +1,12 @@
 FROM php:8.2-apache
 
-RUN apt-get update && apt-get install -y libzip-dev zip unzip \
+RUN apt-get update && apt-get install -y libzip-dev zip unzip curl \
     && docker-php-ext-install pdo_mysql zip \
     && a2enmod rewrite
+
+# Install Node.js and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 WORKDIR /var/www/html
 
