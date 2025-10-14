@@ -51,6 +51,9 @@ RUN php artisan key:generate --force
 # Run migrations
 RUN php artisan migrate --force
 
+# Seed the database with admin account and sample data
+RUN php artisan db:seed --force
+
 # Cache Laravel configuration
 RUN php artisan config:cache \
     && php artisan route:cache \
