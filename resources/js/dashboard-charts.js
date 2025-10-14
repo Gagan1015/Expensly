@@ -1,4 +1,4 @@
-import { Chart } from "@/components/ui/chart"
+import { Chart } from "chart.js/auto"
 // Dashboard Charts JavaScript
 document.addEventListener("DOMContentLoaded", () => {
   // Chart.js default configuration
