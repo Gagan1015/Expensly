@@ -13,7 +13,11 @@ WORKDIR /var/www/html
 COPY . .
 
 # Set Apache document root to Laravel's public folder
-RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
+    && sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/apache2.conf
+
+# Create .env file from .env.example
+RUN cp .env.example .env
 
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
@@ -22,7 +26,10 @@ RUN chown -R www-data:www-data /var/www/html \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Optional: build frontend assets
+# Build frontend assets
 RUN npm install && npm run build
 
-CMD php artisan key:generate --force && apache2-foreground
+# Generate application key
+RUN php artisan key:generate --force
+
+CMD ["apache2-foreground"]
