@@ -25,14 +25,16 @@ RUN cp .env.example .env
 
 # Set environment to production and use SQLite
 RUN sed -i 's/APP_ENV=local/APP_ENV=production/' .env \
-    && sed -i 's/APP_DEBUG=true/APP_DEBUG=false/' .env \
+    && sed -i 's/APP_DEBUG=true/APP_DEBUG=true/' .env \
     && sed -i 's|APP_URL=http://localhost|APP_URL=https://expensly-krg5.onrender.com|' .env \
     && sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=sqlite/' .env \
     && sed -i 's/SESSION_DRIVER=database/SESSION_DRIVER=file/' .env \
     && sed -i 's/CACHE_STORE=database/CACHE_STORE=file/' .env \
+    && sed -i 's/QUEUE_CONNECTION=database/QUEUE_CONNECTION=sync/' .env \
     && echo "" >> .env \
     && echo "# Force HTTPS in production" >> .env \
-    && echo "ASSET_URL=https://expensly-krg5.onrender.com" >> .env
+    && echo "ASSET_URL=https://expensly-krg5.onrender.com" >> .env \
+    && echo "TRUSTED_PROXIES=*" >> .env
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
