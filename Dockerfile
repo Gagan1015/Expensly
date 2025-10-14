@@ -1,7 +1,7 @@
 FROM php:8.2-apache
 
-RUN apt-get update && apt-get install -y libzip-dev zip unzip curl sqlite3 libsqlite3-dev \
-    && docker-php-ext-install pdo_mysql pdo_sqlite zip \
+RUN apt-get update && apt-get install -y libzip-dev zip unzip curl sqlite3 libsqlite3-dev libpq-dev \
+    && docker-php-ext-install pdo_mysql pdo_sqlite pdo_pgsql zip \
     && a2enmod rewrite
 
 # Install Node.js and npm
@@ -23,11 +23,10 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
 # Create .env file from .env.example
 RUN cp .env.example .env
 
-# Set environment to production and use SQLite
+# Set environment to production - DB connection will be set via environment variables
 RUN sed -i 's/APP_ENV=local/APP_ENV=production/' .env \
     && sed -i 's/APP_DEBUG=true/APP_DEBUG=true/' .env \
     && sed -i 's|APP_URL=http://localhost|APP_URL=https://expensly-krg5.onrender.com|' .env \
-    && sed -i 's/DB_CONNECTION=mysql/DB_CONNECTION=sqlite/' .env \
     && sed -i 's/SESSION_DRIVER=database/SESSION_DRIVER=file/' .env \
     && sed -i 's/CACHE_STORE=database/CACHE_STORE=file/' .env \
     && sed -i 's/QUEUE_CONNECTION=database/QUEUE_CONNECTION=sync/' .env \

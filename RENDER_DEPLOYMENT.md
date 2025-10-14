@@ -1,35 +1,57 @@
-# Database Persistence on Render
+# Database Persistence on Render - FREE Solution
 
-## Important: Configure Persistent Disk
+## ⚠️ Important: Free Tier Limitation
 
-To prevent database loss on each deployment, you need to configure a persistent disk in Render:
+Render's **free tier does NOT support persistent disks**. You have two options:
 
-### Steps to Add Persistent Disk:
+## Option 1: Free PostgreSQL Database (RECOMMENDED ✅)
 
-1. Go to your Render service dashboard
-2. Click on your "expensly" service
-3. Go to the **"Disks"** tab
-4. Click **"Add Disk"**
-5. Configure:
-   - **Name**: `expensly-database`
-   - **Mount Path**: `/var/www/html/database`
-   - **Size**: 1 GB (free tier allows up to 1GB)
-6. Click **"Save"**
-7. Redeploy your service
+Use Render's **free PostgreSQL database** - your data persists across deployments!
 
-### What This Does:
+### Steps to Add Free PostgreSQL:
 
-- The SQLite database file will be stored on persistent disk
-- Database survives deployments and restarts
-- Your user accounts and data won't be lost
+1. **Create PostgreSQL Database**
+   - In Render Dashboard, click **"New +"** → **"PostgreSQL"**
+   - Name: `expensly-db`
+   - Database: `expensly`
+   - User: (auto-generated)
+   - Region: Same as your web service
+   - Plan: **Free**
+   - Click **"Create Database"**
 
-### Without Persistent Disk:
+2. **Connect Database to Your Service**
+   - Go to your **"Expensly"** web service
+   - Click **"Environment"** tab
+   - Click **"Add Environment Variable"**
+   - The PostgreSQL database will show under "Add from Database"
+   - Click your database name to auto-populate `DATABASE_URL`
+   - Click **"Save Changes"**
 
-- Database is recreated on every deployment
-- All user data is lost
-- Only works for testing/demo purposes
+3. **Redeploy**
+   - Go to **"Manual Deploy"** → **"Clear build cache & deploy"**
+   - Wait for deployment to complete
 
-### Login Credentials (After First Deployment):
+### What You Get with PostgreSQL:
+
+✅ **FREE** - No cost
+✅ **Persistent** - Data survives deployments
+✅ **Automatic backups** - Daily backups included
+✅ **Better performance** - More suitable for production
+✅ **No storage limit** on free tier
+
+---
+
+## Option 2: Upgrade to Starter Plan ($7/month)
+
+If you prefer SQLite with persistent disk:
+
+1. Upgrade to **Starter plan** ($7/month)
+2. Add persistent disk at `/var/www/html/database`
+3. Keep using SQLite
+
+---
+
+## Login Credentials (After First Deployment):
 
 **Admin:**
 - Email: `admin@expensly.com`
@@ -40,3 +62,11 @@ To prevent database loss on each deployment, you need to configure a persistent 
 - Password: `demo123`
 
 These accounts are created automatically on the first deployment only.
+
+---
+
+## Current Setup:
+
+The application now supports **BOTH** SQLite and PostgreSQL:
+- If `DATABASE_URL` environment variable exists → Uses PostgreSQL
+- If not → Falls back to SQLite (data lost on each deploy on free tier)

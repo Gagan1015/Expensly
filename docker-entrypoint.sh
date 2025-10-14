@@ -3,29 +3,37 @@ set -e
 
 echo "Starting application initialization..."
 
-# Create database directory if it doesn't exist
-mkdir -p /var/www/html/database
-
-# Check if database file exists and has data
-if [ ! -f /var/www/html/database/database.sqlite ] || [ ! -s /var/www/html/database/database.sqlite ]; then
-    echo "Database not found or empty. Creating and seeding database..."
-    touch /var/www/html/database/database.sqlite
-    
-    # Set permissions
-    chown www-data:www-data /var/www/html/database/database.sqlite
-    chmod 666 /var/www/html/database/database.sqlite
-    
-    # Run migrations
-    php artisan migrate --force
-    
-    # Seed the database
-    php artisan db:seed --force
-    
-    echo "Database created and seeded successfully!"
+# Determine if we're using SQLite or PostgreSQL
+if [ -n "$DATABASE_URL" ]; then
+    echo "Using PostgreSQL database from DATABASE_URL"
+    DB_TYPE="pgsql"
 else
-    echo "Database exists. Running migrations (if any)..."
-    php artisan migrate --force
-    echo "Migrations completed!"
+    echo "Using SQLite database"
+    DB_TYPE="sqlite"
+    
+    # Create database directory for SQLite
+    mkdir -p /var/www/html/database
+    
+    if [ ! -f /var/www/html/database/database.sqlite ]; then
+        echo "Creating SQLite database file..."
+        touch /var/www/html/database/database.sqlite
+        chown www-data:www-data /var/www/html/database/database.sqlite
+        chmod 666 /var/www/html/database/database.sqlite
+    fi
+fi
+
+# Run migrations
+echo "Running migrations..."
+php artisan migrate --force
+
+# Check if we need to seed (only if users table is empty)
+USER_COUNT=$(php artisan tinker --execute="echo \App\Models\User::count();")
+if [ "$USER_COUNT" = "0" ]; then
+    echo "Database is empty. Seeding initial data..."
+    php artisan db:seed --force
+    echo "Database seeded successfully!"
+else
+    echo "Database already has data. Skipping seeding."
 fi
 
 # Clear and cache configuration

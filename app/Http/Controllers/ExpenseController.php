@@ -262,23 +262,25 @@ class ExpenseController extends Controller
             ->get();
 
         // Monthly spending trend (last 6 months)
-        // Use SQLite-compatible date functions
+        // Use database-agnostic approach with Laravel's date functions
         $monthlyTrend = $user->expenses()
-            ->selectRaw("strftime('%Y', date) as year, strftime('%m', date) as month, SUM(amount) as total")
             ->where('date', '>=', now()->subMonths(6))
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
             ->get()
-            ->map(function($item) {
-                $date = \Carbon\Carbon::createFromDate($item->year, $item->month, 1);
+            ->groupBy(function($expense) {
+                return $expense->date->format('Y-m');
+            })
+            ->map(function($expenses, $yearMonth) {
+                $date = \Carbon\Carbon::parse($yearMonth . '-01');
                 return (object) [
-                    'year' => $item->year,
-                    'month_num' => $item->month,
-                    'total' => $item->total,
+                    'year' => $date->year,
+                    'month_num' => $date->month,
+                    'total' => $expenses->sum('amount'),
                     'month' => $date->format('M')
                 ];
-            });
+            })
+            ->sortBy('year')
+            ->sortBy('month_num')
+            ->values();
 
         // Top expenses
         $topExpenses = $user->expenses()
