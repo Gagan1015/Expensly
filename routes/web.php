@@ -7,11 +7,10 @@ use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LandingController;
 
-// Redirect root to login
-Route::get('/', function () {
-    return redirect('/login');
-});
+// Landing page
+Route::get('/', [LandingController::class, 'index'])->name('landing');
 
 // Guest routes (accessible only when not authenticated)
 Route::middleware('guest')->group(function () {

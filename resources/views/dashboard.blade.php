@@ -6,16 +6,17 @@
 <div class="dashboard-container">
     <div class="container-fluid py-4">
         <!-- Header -->
-        <div class="col-12">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">Expense Dashboard</h1>
-                <p class="dashboard-subtitle">
-                    Welcome back, {{ Auth::user()->name ?? 'Admin' }}! Here's your financial overview for
-                    {{ now()->format('F Y') }}
-                </p>
+        <div class="row">
+            <div class="col-12">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">Expense Dashboard</h1>
+                    <p class="dashboard-subtitle">
+                        Welcome back, {{ Auth::user()->name ?? 'Admin' }}! Here's your financial overview for
+                        {{ now()->format('F Y') }}
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
 
     <!-- Stats Cards -->
     <div class="row g-4 mb-5">
@@ -241,21 +242,21 @@
                     <p class="card-text text-muted mb-0">{{ now()->format('F Y') }} budget status</p>
                 </div>
                 <div class="card-body text-center">
-                    <div class="budget-circle" style="--percentage: {{ $budget['percentage'] }}">
-                        <div class="budget-percentage">{{ number_format($budget['percentage'], 1) }}%</div>
+                    <div class="budget-circle" style="--percentage: {{ $budget['percentage'] ?? 0 }}">
+                        <div class="budget-percentage">{{ number_format($budget['percentage'] ?? 0, 1) }}%</div>
                         <div class="budget-label">Used</div>
                     </div>
                     <div class="budget-details mt-3">
                         <div class="row text-center">
                             <div class="col-6">
                                 <div class="budget-stat">
-                                    <div class="budget-stat-value">₹{{ number_format($budget['monthly']) }}</div>
+                                    <div class="budget-stat-value">₹{{ number_format($budget['monthly'] ?? 0) }}</div>
                                     <div class="budget-stat-label">Total Budget</div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <div class="budget-stat">
-                                    <div class="budget-stat-value">₹{{ number_format($budget['used']) }}</div>
+                                    <div class="budget-stat-value">₹{{ number_format($budget['used'] ?? 0) }}</div>
                                     <div class="budget-stat-label">Used</div>
                                 </div>
                             </div>
@@ -294,7 +295,6 @@
         </div>
     </div>
 </div>
-</div>
 
 <!-- Budget Modal -->
 <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
@@ -314,7 +314,7 @@
                         <div class="input-group">
                             <span class="input-group-text">₹</span>
                             <input type="number" class="form-control" id="monthly_budget" name="monthly_budget"
-                                value="{{ $budget['monthly'] }}" min="0" step="0.01" required>
+                                value="{{ $budget['monthly'] ?? 0 }}" min="0" step="0.01" required>
                         </div>
                         <div class="form-text">Set your target spending limit for this month</div>
                     </div>
@@ -322,11 +322,11 @@
                         <div class="row">
                             <div class="col-6">
                                 <small class="text-muted">Current Used:</small>
-                                <div class="fw-bold">₹{{ number_format($budget['used']) }}</div>
+                                <div class="fw-bold">₹{{ number_format($budget['used'] ?? 0) }}</div>
                             </div>
                             <div class="col-6">
                                 <small class="text-muted">Remaining:</small>
-                                <div class="fw-bold text-success">₹{{ number_format($budget['remaining']) }}</div>
+                                <div class="fw-bold text-success">₹{{ number_format($budget['remaining'] ?? 0) }}</div>
                             </div>
                         </div>
                     </div>
