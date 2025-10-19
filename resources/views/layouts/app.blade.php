@@ -269,7 +269,9 @@
     @auth
     <nav class="sidebar" id="appSidebar">
         <div class="p-3">
-            <h4 class="navbar-brand mb-0"><i class="fas fa-wallet me-2"></i><span class="nav-text">Expense Manager</span></h4>
+            <a href="{{ route('landing') }}" class="navbar-brand mb-0 text-decoration-none text-white hover:opacity-80 transition-opacity">
+                <i class="fas fa-wallet me-2"></i><span class="nav-text">Expense Manager</span>
+            </a>
         </div>
         <div class="nav flex-column">
             <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -305,8 +307,8 @@
             <button class="btn btn-outline-secondary me-2" type="button" id="appSidebarToggle" title="Toggle sidebar">
                 <i class="fas fa-bars"></i>
             </button>
-            <a class="navbar-brand" id="appTopbarBrand" href="{{ route('dashboard') }}">
-                Laravel Auth
+            <a class="navbar-brand" id="appTopbarBrand" href="{{ route('landing') }}">
+                Expensly
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>

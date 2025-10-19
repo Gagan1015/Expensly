@@ -3,12 +3,12 @@
         <div class="grid md:grid-cols-4 gap-12 mb-12">
             <!-- Brand -->
             <div class="space-y-4">
-                <div class="flex items-center gap-2">
+                <a href="{{ route('landing') }}" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                         <span class="text-primary-foreground font-bold">E</span>
                     </div>
                     <span class="text-xl font-bold">Expensly</span>
-                </div>
+                </a>
                 <p class="text-background/70 text-sm leading-relaxed">
                     Smart expense management for everyone. Take control of your finances today.
                 </p>
