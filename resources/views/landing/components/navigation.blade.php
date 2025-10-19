@@ -1,4 +1,4 @@
-<nav class="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border" x-data="{ mobileMenuOpen: false }">
+<nav class="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border" x-data="{ mobileMenuOpen: false, darkMode: localStorage.getItem('darkMode') === 'true' }" x-init="$watch('darkMode', value => localStorage.setItem('darkMode', value)); if (darkMode) { document.documentElement.classList.add('dark') } else { document.documentElement.classList.remove('dark') }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
             <!-- Logo -->
@@ -26,8 +26,7 @@
             <div class="hidden md:flex items-center gap-4">
                 <!-- Dark mode toggle with Alpine.js -->
                 <button
-                    @click="console.log('Desktop button clicked!'); darkMode = toggleDarkMode()"
-                    onclick="console.log('Direct desktop onclick!')"
+                    @click="darkMode = !darkMode; if (darkMode) { document.documentElement.classList.add('dark') } else { document.documentElement.classList.remove('dark') }"
                     class="p-2 hover:bg-muted rounded-lg transition-colors"
                     aria-label="Toggle dark mode"
                 >
@@ -49,8 +48,7 @@
             <!-- Mobile Menu Button -->
             <div class="md:hidden flex items-center gap-2">
                 <button
-                    @click="console.log('Mobile button clicked!'); darkMode = toggleDarkMode()"
-                    onclick="console.log('Direct mobile onclick!')"
+                    @click="darkMode = !darkMode; if (darkMode) { document.documentElement.classList.add('dark') } else { document.documentElement.classList.remove('dark') }"
                     class="p-2 hover:bg-muted rounded-lg transition-colors"
                     aria-label="Toggle dark mode"
                 >
@@ -77,7 +75,7 @@
         </div>
 
         <!-- Mobile Menu -->
-        <div x-show="mobileMenuOpen" class="md:hidden border-t border-border py-4 space-y-3">
+        <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2" class="md:hidden border-t border-border py-4 space-y-3">
             <a href="#features" class="block px-4 py-2 text-muted-foreground hover:text-foreground transition-colors">
                 Features
             </a>
