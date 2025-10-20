@@ -1,352 +1,363 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Categories Management</h5>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                            <i class="fas fa-plus"></i> Add New Category
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <!-- Statistics Cards -->
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <div class="card bg-primary text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="card-title">Total Categories</h6>
-                                            <h4 class="mb-0" id="totalCategoriesCount">{{ $categories->count() }}</h4>
-                                        </div>
-                                        <i class="fas fa-tags fa-2x opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-success text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="card-title">Active Categories</h6>
-                                            <h4 class="mb-0" id="activeCategoriesCount">{{ $categories->filter(fn($cat) => $cat->expenses_count > 0)->count() }}</h4>
-                                        </div>
-                                        <i class="fas fa-check-circle fa-2x opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-warning text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="card-title">Unused Categories</h6>
-                                            <h4 class="mb-0" id="unusedCategoriesCount">{{ $categories->filter(fn($cat) => $cat->expenses_count == 0)->count() }}</h4>
-                                        </div>
-                                        <i class="fas fa-exclamation-triangle fa-2x opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="card bg-info text-white">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <h6 class="card-title">Most Used</h6>
-                                            <h4 class="mb-0">{{ $categories->sortByDesc('expenses_count')->first()->name ?? 'None' }}</h4>
-                                        </div>
-                                        <i class="fas fa-star fa-2x opacity-75"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <h5 class="text-xl font-semibold text-gray-800">Categories Management</h5>
+            <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition modal-trigger" data-modal="addCategoryModal">
+                <i class="fas fa-plus mr-2"></i> Add New Category
+            </button>
+        </div>
 
-                    <!-- Categories Grid -->
-                    <div class="row" id="categoriesGrid">
-                        @forelse($categories as $category)
-                            <div class="col-md-4 mb-3" data-category-id="{{ $category->id }}">
-                                <div class="card h-100 border-0 shadow-sm">
-                                    <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-start mb-3">
-                                            <div class="d-flex align-items-center">
-                                                <span class="badge rounded-pill me-2" style="background-color: {{ $category->color }}; width: 20px; height: 20px;">&nbsp;</span>
-                                                <h6 class="card-title mb-0">{{ $category->name }}</h6>
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm text-muted border-0" type="button" data-bs-toggle="dropdown" style="background: none; box-shadow: none;">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-end">
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-action="view" data-category-id="{{ $category->id }}">
-                                                            <i class="fas fa-eye me-2"></i>View Details
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-action="edit" data-category-id="{{ $category->id }}">
-                                                            <i class="fas fa-edit me-2"></i>Edit
-                                                        </a>
-                                                    </li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li>
-                                                        <a class="dropdown-item text-danger" href="#" data-action="delete" data-category-id="{{ $category->id }}" data-name="{{ $category->name }}" data-expenses-count="{{ $category->expenses_count }}">
-                                                            <i class="fas fa-trash me-2"></i>Delete
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <p class="card-text text-muted small">{{ $category->description ?: 'No description provided' }}</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">
-                                                <i class="fas fa-receipt me-1"></i>
-                                                {{ $category->expenses_count }} {{ Str::plural('expense', $category->expenses_count) }}
-                                            </small>
-                                            <small class="text-muted">
-                                                Created {{ $category->created_at->diffForHumans() }}
-                                            </small>
-                                        </div>
+        <div class="p-6">
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="bg-blue-600 text-white rounded-lg shadow-md p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h6 class="text-sm font-medium opacity-90">Total Categories</h6>
+                            <h4 class="text-3xl font-bold mt-1" id="totalCategoriesCount">{{ $categories->count() }}</h4>
+                        </div>
+                        <i class="fas fa-tags text-4xl opacity-75"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-green-600 text-white rounded-lg shadow-md p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h6 class="text-sm font-medium opacity-90">Active Categories</h6>
+                            <h4 class="text-3xl font-bold mt-1" id="activeCategoriesCount">{{ $categories->filter(fn($cat) => $cat->expenses_count > 0)->count() }}</h4>
+                        </div>
+                        <i class="fas fa-check-circle text-4xl opacity-75"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-500 text-white rounded-lg shadow-md p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h6 class="text-sm font-medium opacity-90">Unused Categories</h6>
+                            <h4 class="text-3xl font-bold mt-1" id="unusedCategoriesCount">{{ $categories->filter(fn($cat) => $cat->expenses_count == 0)->count() }}</h4>
+                        </div>
+                        <i class="fas fa-exclamation-triangle text-4xl opacity-75"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-cyan-600 text-white rounded-lg shadow-md p-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h6 class="text-sm font-medium opacity-90">Most Used</h6>
+                            <h4 class="text-xl font-bold mt-1">{{ $categories->sortByDesc('expenses_count')->first()->name ?? 'None' }}</h4>
+                        </div>
+                        <i class="fas fa-star text-4xl opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="categoriesGrid">
+                @forelse($categories as $category)
+                    <div class="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition" data-category-id="{{ $category->id }}">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="flex items-center">
+                                    <span class="inline-block w-5 h-5 rounded-full mr-2 category-color" data-color="{{ $category->color }}"></span>
+                                    <h6 class="font-semibold text-gray-800">{{ $category->name }}</h6>
+                                </div>
+                                <div class="relative dropdown-container">
+                                    <button class="text-gray-500 hover:text-gray-700 p-1 dropdown-toggle">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <div class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 category-action" data-action="view" data-category-id="{{ $category->id }}">
+                                            <i class="fas fa-eye mr-2"></i>View Details
+                                        </a>
+                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 category-action" data-action="edit" data-category-id="{{ $category->id }}">
+                                            <i class="fas fa-edit mr-2"></i>Edit
+                                        </a>
+                                        <hr class="my-1 border-gray-200">
+                                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 category-action" data-action="delete" data-category-id="{{ $category->id }}" data-name="{{ $category->name }}" data-expenses-count="{{ $category->expenses_count }}">
+                                            <i class="fas fa-trash mr-2"></i>Delete
+                                        </a>
                                     </div>
                                 </div>
                             </div>
-                        @empty
-                            <div class="col-12">
-                                <div class="text-center py-5">
-                                    <i class="fas fa-tags fa-3x text-muted mb-3"></i>
-                                    <h5 class="text-muted">No categories found</h5>
-                                    <p class="text-muted">Start by creating your first category to organize your expenses.</p>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                                        <i class="fas fa-plus"></i> Create First Category
-                                    </button>
-                                </div>
+                            <p class="text-sm text-gray-600 mb-3">{{ $category->description ?: 'No description provided' }}</p>
+                            <div class="flex justify-between items-center text-xs text-gray-500">
+                                <span>
+                                    <i class="fas fa-receipt mr-1"></i>
+                                    {{ $category->expenses_count }} {{ Str::plural('expense', $category->expenses_count) }}
+                                </span>
+                                <span>
+                                    Created {{ $category->created_at->diffForHumans() }}
+                                </span>
                             </div>
-                        @endforelse
+                        </div>
                     </div>
-                </div>
+                @empty
+                    <div class="col-span-full">
+                        <div class="text-center py-12">
+                            <i class="fas fa-tags text-6xl text-gray-400 mb-4"></i>
+                            <h5 class="text-xl font-semibold text-gray-600 mb-2">No categories found</h5>
+                            <p class="text-gray-500 mb-4">Start by creating your first category to organize your expenses.</p>
+                            <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition modal-trigger" data-modal="addCategoryModal">
+                                <i class="fas fa-plus mr-2"></i> Create First Category
+                            </button>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
 </div>
 
 <!-- Add Category Modal -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add New Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="addCategoryForm" action="{{ route('categories.store') }}" method="POST">
-                @csrf
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="color" class="form-label">Color</label>
-                        <div class="d-flex align-items-center">
-                            <input type="color" class="form-control form-control-color me-3" id="color" name="color" value="#007bff" style="width: 60px;">
-                            <small class="text-muted">Choose a color to identify this category</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Create Category
-                    </button>
-                </div>
-            </form>
+<div id="addCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h5 class="text-xl font-semibold text-gray-800">Add New Category</h5>
+            <button type="button" class="text-gray-400 hover:text-gray-600 modal-close" data-modal="addCategoryModal">
+                <i class="fas fa-times text-xl"></i>
+            </button>
         </div>
+        <form id="addCategoryForm" action="{{ route('categories.store') }}" method="POST">
+            @csrf
+            <div class="p-6 space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name <span class="text-red-600">*</span></label>
+                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none" id="description" name="description" rows="3"></textarea>
+                </div>
+                <div>
+                    <label for="color" class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                    <div class="flex items-center">
+                        <input type="color" class="w-16 h-10 border border-gray-300 rounded-lg cursor-pointer mr-3" id="color" name="color" value="#007bff">
+                        <small class="text-sm text-gray-500">Choose a color to identify this category</small>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end items-center px-6 py-4 bg-gray-50 border-t border-gray-200 space-x-3">
+                <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition modal-close" data-modal="addCategoryModal">Cancel</button>
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-save mr-2"></i> Create Category
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- Edit Category Modal -->
-<div class="modal fade" id="editCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form id="editCategoryForm" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="edit_name" class="form-label">Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="edit_name" name="name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_description" class="form-label">Description</label>
-                        <textarea class="form-control" id="edit_description" name="description" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_color" class="form-label">Color</label>
-                        <div class="d-flex align-items-center">
-                            <input type="color" class="form-control form-control-color me-3" id="edit_color" name="color" style="width: 60px;">
-                            <small class="text-muted">Choose a color to identify this category</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Category
-                    </button>
-                </div>
-            </form>
+<div id="editCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h5 class="text-xl font-semibold text-gray-800">Edit Category</h5>
+            <button type="button" class="text-gray-400 hover:text-gray-600 modal-close" data-modal="editCategoryModal">
+                <i class="fas fa-times text-xl"></i>
+            </button>
         </div>
+        <form id="editCategoryForm" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="p-6 space-y-4">
+                <div>
+                    <label for="edit_name" class="block text-sm font-medium text-gray-700 mb-2">Name <span class="text-red-600">*</span></label>
+                    <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" id="edit_name" name="name" required>
+                </div>
+                <div>
+                    <label for="edit_description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                    <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none" id="edit_description" name="description" rows="3"></textarea>
+                </div>
+                <div>
+                    <label for="edit_color" class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+                    <div class="flex items-center">
+                        <input type="color" class="w-16 h-10 border border-gray-300 rounded-lg cursor-pointer mr-3" id="edit_color" name="color">
+                        <small class="text-sm text-gray-500">Choose a color to identify this category</small>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end items-center px-6 py-4 bg-gray-50 border-t border-gray-200 space-x-3">
+                <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition modal-close" data-modal="editCategoryModal">Cancel</button>
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                    <i class="fas fa-save mr-2"></i> Update Category
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- View Category Modal -->
-<div class="modal fade" id="viewCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Category Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Name</label>
-                            <div class="d-flex align-items-center">
-                                <span id="view_color_badge" class="badge rounded-pill me-2" style="width: 20px; height: 20px;">&nbsp;</span>
-                                <span id="view_name"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Expenses Count</label>
-                            <div id="view_expenses_count"></div>
-                        </div>
+<div id="viewCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h5 class="text-xl font-semibold text-gray-800">Category Details</h5>
+            <button type="button" class="text-gray-400 hover:text-gray-600 modal-close" data-modal="viewCategoryModal">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Name</label>
+                    <div class="flex items-center">
+                        <span id="view_color_badge" class="inline-block w-5 h-5 rounded-full mr-2"></span>
+                        <span id="view_name" class="text-gray-800"></span>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Description</label>
-                    <div id="view_description_text"></div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Created</label>
-                            <div id="view_created_at"></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Last Updated</label>
-                            <div id="view_updated_at"></div>
-                        </div>
-                    </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Expenses Count</label>
+                    <div id="view_expenses_count" class="text-gray-800"></div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-warning" data-action="edit-from-view">
-                    <i class="fas fa-edit"></i> Edit Category
-                </button>
+            <div class="mt-4">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                <div id="view_description_text" class="text-gray-800"></div>
             </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Created</label>
+                    <div id="view_created_at" class="text-gray-800"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Last Updated</label>
+                    <div id="view_updated_at" class="text-gray-800"></div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end items-center px-6 py-4 bg-gray-50 border-t border-gray-200 space-x-3">
+            <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition modal-close" data-modal="viewCategoryModal">Close</button>
+            <button type="button" class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition edit-from-view-btn">
+                <i class="fas fa-edit mr-2"></i> Edit Category
+            </button>
         </div>
     </div>
 </div>
 
 <!-- Delete Category Modal -->
-<div class="modal fade" id="deleteCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-danger">Delete Category</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<div id="deleteCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+        <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+            <h5 class="text-xl font-semibold text-red-600">Delete Category</h5>
+            <button type="button" class="text-gray-400 hover:text-gray-600 modal-close" data-modal="deleteCategoryModal">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg mb-4">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <strong>Warning!</strong> This action cannot be undone.
             </div>
-            <div class="modal-body">
-                <div class="alert alert-warning" role="alert">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    <strong>Warning!</strong> This action cannot be undone.
-                </div>
-                <p>Are you sure you want to delete the category <strong id="delete_category_name"></strong>?</p>
-                <div id="delete_category_expenses_warning" class="alert alert-danger d-none" role="alert">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    This category is currently used by <strong id="delete_expenses_count"></strong> expense(s). Deleting this category will remove the category association from those expenses.
-                </div>
+            <p class="text-gray-700">Are you sure you want to delete the category <strong id="delete_category_name"></strong>?</p>
+            <div id="delete_category_expenses_warning" class="hidden bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mt-4">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                This category is currently used by <strong id="delete_expenses_count"></strong> expense(s). Deleting this category will remove the category association from those expenses.
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteCategoryForm" style="display: inline;" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-trash"></i> Delete Category
-                    </button>
-                </form>
-            </div>
+        </div>
+        <div class="flex justify-end items-center px-6 py-4 bg-gray-50 border-t border-gray-200 space-x-3">
+            <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition modal-close" data-modal="deleteCategoryModal">Cancel</button>
+            <form id="deleteCategoryForm" class="inline" method="POST">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                    <i class="fas fa-trash mr-2"></i> Delete Category
+                </button>
+            </form>
         </div>
     </div>
 </div>
 
 <!-- Toast Container -->
-<div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 11;"></div>
+<div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle category actions using event delegation
-    document.addEventListener('click', function(e) {
-        const target = e.target.closest('[data-action]');
-        if (!target) return;
-        
-        const action = target.dataset.action;
-        const categoryId = target.dataset.categoryId;
-        
-        if (action && categoryId) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Close any open dropdown
-            const dropdown = target.closest('.dropdown');
-            if (dropdown) {
-                const dropdownButton = dropdown.querySelector('[data-bs-toggle="dropdown"]');
-                if (dropdownButton) {
-                    bootstrap.Dropdown.getInstance(dropdownButton)?.hide();
-                }
-            }
-            
-            switch(action) {
-                case 'view':
-                    viewCategory(categoryId);
-                    break;
-                case 'edit':
-                    editCategory(categoryId);
-                    break;
-                case 'delete':
-                    const name = target.dataset.name || '';
-                    const expensesCount = target.dataset.expensesCount || '0';
-                    showDeleteModal(categoryId, name, expensesCount);
-                    break;
-                case 'edit-from-view':
-                    editCategoryFromView();
-                    break;
-            }
-        }
-    });
+// Modal functions
+function openModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
 
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Event delegation for dropdown toggles
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.dropdown-toggle')) {
+        event.stopPropagation();
+        const button = event.target.closest('.dropdown-toggle');
+        const dropdown = button.nextElementSibling;
+        const allDropdowns = document.querySelectorAll('.dropdown-menu');
+        
+        allDropdowns.forEach(d => {
+            if (d !== dropdown) d.classList.add('hidden');
+        });
+        
+        dropdown.classList.toggle('hidden');
+        return;
+    }
+    
+    // Close dropdowns when clicking outside
+    document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.add('hidden'));
+});
+
+// Event delegation for category actions
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.category-action')) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const actionElement = event.target.closest('.category-action');
+        const action = actionElement.getAttribute('data-action');
+        const categoryId = actionElement.getAttribute('data-category-id');
+        const name = actionElement.getAttribute('data-name') || '';
+        const expensesCount = actionElement.getAttribute('data-expenses-count') || 0;
+        
+        // Close dropdown
+        const dropdown = actionElement.closest('.dropdown-menu');
+        if (dropdown) dropdown.classList.add('hidden');
+        
+        switch(action) {
+            case 'view':
+                viewCategory(categoryId);
+                break;
+            case 'edit':
+                editCategory(categoryId);
+                break;
+            case 'delete':
+                showDeleteModal(categoryId, name, expensesCount);
+                break;
+        }
+    }
+});
+
+// Event delegation for modal triggers
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.modal-trigger')) {
+        const modalId = event.target.closest('.modal-trigger').getAttribute('data-modal');
+        openModal(modalId);
+    }
+});
+
+// Event delegation for modal close buttons
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.modal-close')) {
+        const modalId = event.target.closest('.modal-close').getAttribute('data-modal');
+        closeModal(modalId);
+    }
+});
+
+// Event delegation for edit from view button
+document.addEventListener('click', function(event) {
+    if (event.target.closest('.edit-from-view-btn')) {
+        editCategoryFromView();
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
     // Add category form submission
     document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
         e.preventDefault();
@@ -369,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             if (data.success) {
-                bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
+                closeModal('addCategoryModal');
                 addCategoryToGrid(data.category);
                 updateStatistics();
                 showToast(data.message, 'success');
@@ -383,7 +394,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (error.message && typeof error.message === 'string') {
                 showToast(error.message, 'error');
             } else if (error.errors) {
-                // Handle validation errors
                 const firstError = Object.values(error.errors)[0][0];
                 showToast(firstError, 'error');
             } else {
@@ -414,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             if (data.success) {
-                bootstrap.Modal.getInstance(document.getElementById('editCategoryModal')).hide();
+                closeModal('editCategoryModal');
                 updateCategoryInGrid(data.category);
                 updateStatistics();
                 showToast(data.message, 'success');
@@ -427,7 +437,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (error.message && typeof error.message === 'string') {
                 showToast(error.message, 'error');
             } else if (error.errors) {
-                // Handle validation errors
                 const firstError = Object.values(error.errors)[0][0];
                 showToast(firstError, 'error');
             } else {
@@ -459,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(data => {
             if (data.success) {
-                bootstrap.Modal.getInstance(document.getElementById('deleteCategoryModal')).hide();
+                closeModal('deleteCategoryModal');
                 removeCategoryFromGrid(window.currentDeletingCategoryId);
                 updateStatistics();
                 showToast(data.message, 'success');
@@ -472,7 +481,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (error.message && typeof error.message === 'string') {
                 showToast(error.message, 'error');
             } else if (error.errors) {
-                // Handle validation errors
                 const firstError = Object.values(error.errors)[0][0];
                 showToast(firstError, 'error');
             } else {
@@ -484,24 +492,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // View category details
 function viewCategory(categoryId) {
-    console.log('Viewing category:', categoryId);
-    
     if (!categoryId) {
-        console.error('No category ID provided for viewing');
         showToast('Error: No category ID provided', 'error');
         return;
     }
     
     fetch(`/api/categories/${categoryId}`)
     .then(response => {
-        console.log('View category response status:', response.status);
         if (!response.ok) {
             return response.json().then(err => Promise.reject(err));
         }
         return response.json();
     })
     .then(data => {
-        console.log('View category data received:', data);
         document.getElementById('view_name').textContent = data.name;
         document.getElementById('view_color_badge').style.backgroundColor = data.color;
         document.getElementById('view_expenses_count').textContent = `${data.expenses_count} ${data.expenses_count === 1 ? 'expense' : 'expenses'}`;
@@ -510,8 +513,7 @@ function viewCategory(categoryId) {
         document.getElementById('view_updated_at').textContent = new Date(data.updated_at).toLocaleDateString();
         
         window.currentViewingCategoryId = categoryId;
-        console.log('Set currentViewingCategoryId to:', window.currentViewingCategoryId);
-        new bootstrap.Modal(document.getElementById('viewCategoryModal')).show();
+        openModal('viewCategoryModal');
     })
     .catch(error => {
         console.error('Error loading category details:', error);
@@ -525,31 +527,26 @@ function viewCategory(categoryId) {
 
 // Edit category
 function editCategory(categoryId) {
-    console.log('Attempting to edit category:', categoryId);
-    
     if (!categoryId) {
-        console.error('No category ID provided');
         showToast('Error: No category ID provided', 'error');
         return;
     }
     
     fetch(`/api/categories/${categoryId}`)
     .then(response => {
-        console.log('Edit category response status:', response.status);
         if (!response.ok) {
             return response.json().then(err => Promise.reject(err));
         }
         return response.json();
     })
     .then(data => {
-        console.log('Edit category data received:', data);
         document.getElementById('edit_name').value = data.name;
         document.getElementById('edit_description').value = data.description || '';
         document.getElementById('edit_color').value = data.color;
         document.getElementById('editCategoryForm').action = `/categories/${categoryId}`;
         
         window.currentEditingCategoryId = categoryId;
-        new bootstrap.Modal(document.getElementById('editCategoryModal')).show();
+        openModal('editCategoryModal');
     })
     .catch(error => {
         console.error('Error loading category for edit:', error);
@@ -564,13 +561,11 @@ function editCategory(categoryId) {
 // Edit category from view modal
 function editCategoryFromView() {
     if (!window.currentViewingCategoryId) {
-        console.error('No category ID available for editing');
         showToast('Error: No category selected', 'error');
         return;
     }
     
-    console.log('Editing category ID:', window.currentViewingCategoryId);
-    bootstrap.Modal.getInstance(document.getElementById('viewCategoryModal')).hide();
+    closeModal('viewCategoryModal');
     setTimeout(() => {
         editCategory(window.currentViewingCategoryId);
     }, 300);
@@ -586,13 +581,13 @@ function showDeleteModal(categoryId, name, expensesCount) {
     
     if (parseInt(expensesCount) > 0) {
         expensesCountSpan.textContent = expensesCount;
-        warningDiv.classList.remove('d-none');
+        warningDiv.classList.remove('hidden');
     } else {
-        warningDiv.classList.add('d-none');
+        warningDiv.classList.add('hidden');
     }
     
     window.currentDeletingCategoryId = categoryId;
-    new bootstrap.Modal(document.getElementById('deleteCategoryModal')).show();
+    openModal('deleteCategoryModal');
 }
 
 // Helper function to add new category to grid
@@ -600,77 +595,90 @@ function addCategoryToGrid(category) {
     const grid = document.getElementById('categoriesGrid');
     
     // Remove empty state if it exists
-    const emptyState = grid.querySelector('.col-12');
-    if (emptyState && emptyState.querySelector('.text-center')) {
+    const emptyState = grid.querySelector('.col-span-full');
+    if (emptyState) {
         emptyState.remove();
     }
     
     const categoryCard = document.createElement('div');
-    categoryCard.className = 'col-md-4 mb-3';
+    categoryCard.className = 'bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition';
     categoryCard.setAttribute('data-category-id', category.id);
     categoryCard.innerHTML = `
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div class="d-flex align-items-center">
-                        <span class="badge rounded-pill me-2" style="background-color: ${category.color}; width: 20px; height: 20px;">&nbsp;</span>
-                        <h6 class="card-title mb-0">${category.name}</h6>
-                    </div>
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="#" data-action="view" data-category-id="${category.id}">
-                                    <i class="fas fa-eye me-2"></i>View Details
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#" data-action="edit" data-category-id="${category.id}">
-                                    <i class="fas fa-edit me-2"></i>Edit
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="#" data-action="delete" data-category-id="${category.id}" data-name="${category.name}" data-expenses-count="0">
-                                    <i class="fas fa-trash me-2"></i>Delete
-                                </a>
-                            </li>
-                        </ul>
+        <div class="p-4">
+            <div class="flex justify-between items-start mb-3">
+                <div class="flex items-center">
+                    <span class="inline-block w-5 h-5 rounded-full mr-2 category-color" data-color="${category.color}"></span>
+                    <h6 class="font-semibold text-gray-800">${category.name}</h6>
+                </div>
+                <div class="relative dropdown-container">
+                    <button class="text-gray-500 hover:text-gray-700 p-1 dropdown-toggle">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-10">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 category-action" data-action="view" data-category-id="${category.id}">
+                            <i class="fas fa-eye mr-2"></i>View Details
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 category-action" data-action="edit" data-category-id="${category.id}">
+                            <i class="fas fa-edit mr-2"></i>Edit
+                        </a>
+                        <hr class="my-1 border-gray-200">
+                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 category-action" data-action="delete" data-category-id="${category.id}" data-name="${category.name}" data-expenses-count="${category.expenses_count || 0}">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </a>
                     </div>
                 </div>
-                <p class="card-text text-muted small">${category.description || 'No description provided'}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        <i class="fas fa-receipt me-1"></i>
-                        0 expenses
-                    </small>
-                    <small class="text-muted">
-                        Just created
-                    </small>
-                </div>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">${category.description || 'No description provided'}</p>
+            <div class="flex justify-between items-center text-xs text-gray-500">
+                <span>
+                    <i class="fas fa-receipt mr-1"></i>
+                    ${category.expenses_count || 0} ${(category.expenses_count || 0) === 1 ? 'expense' : 'expenses'}
+                </span>
+                <span>
+                    Created ${new Date(category.created_at).toLocaleDateString()}
+                </span>
             </div>
         </div>
     `;
     
-    grid.insertBefore(categoryCard, grid.firstChild);
+    grid.appendChild(categoryCard);
+    
+    // Initialize the color for the newly added category
+    const colorElement = categoryCard.querySelector('.category-color');
+    if (colorElement && category.color) {
+        colorElement.style.backgroundColor = category.color;
+    }
 }
 
-// Helper function to update existing category in grid
+// Helper function to update category in grid
 function updateCategoryInGrid(category) {
     const categoryCard = document.querySelector(`[data-category-id="${category.id}"]`);
-    if (!categoryCard) return;
-    
-    const nameElement = categoryCard.querySelector('.card-title');
-    const colorBadge = categoryCard.querySelector('.badge');
-    const descriptionElement = categoryCard.querySelector('.card-text');
-    const deleteLink = categoryCard.querySelector('[data-action="delete"]');
-    
-    nameElement.textContent = category.name;
-    colorBadge.style.backgroundColor = category.color;
-    descriptionElement.textContent = category.description || 'No description provided';
-    deleteLink.setAttribute('data-name', category.name);
+    if (categoryCard) {
+        const colorSpan = categoryCard.querySelector('.category-color');
+        const nameElement = categoryCard.querySelector('h6.font-semibold');
+        const descriptionElement = categoryCard.querySelector('p.text-sm.text-gray-600');
+        const expensesCountElement = categoryCard.querySelector('.fas.fa-receipt').parentElement;
+        
+        if (colorSpan) {
+            colorSpan.setAttribute('data-color', category.color);
+            colorSpan.style.backgroundColor = category.color;
+        }
+        if (nameElement) nameElement.textContent = category.name;
+        if (descriptionElement) descriptionElement.textContent = category.description || 'No description provided';
+        if (expensesCountElement) {
+            expensesCountElement.innerHTML = `
+                <i class="fas fa-receipt mr-1"></i>
+                ${category.expenses_count || 0} ${(category.expenses_count || 0) === 1 ? 'expense' : 'expenses'}
+            `;
+        }
+        
+        // Update dropdown actions with new data
+        const deleteAction = categoryCard.querySelector('[data-action="delete"]');
+        if (deleteAction) {
+            deleteAction.setAttribute('data-name', category.name);
+            deleteAction.setAttribute('data-expenses-count', category.expenses_count || 0);
+        }
+    }
 }
 
 // Helper function to remove category from grid
@@ -679,68 +687,144 @@ function removeCategoryFromGrid(categoryId) {
     if (categoryCard) {
         categoryCard.remove();
         
-        // Check if grid is empty and add empty state
+        // Check if grid is empty and show empty state
         const grid = document.getElementById('categoriesGrid');
-        if (grid.children.length === 0) {
-            grid.innerHTML = `
-                <div class="col-12">
-                    <div class="text-center py-5">
-                        <i class="fas fa-tags fa-3x text-muted mb-3"></i>
-                        <h5 class="text-muted">No categories found</h5>
-                        <p class="text-muted">Start by creating your first category to organize your expenses.</p>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                            <i class="fas fa-plus"></i> Create First Category
-                        </button>
-                    </div>
+        const remainingCards = grid.querySelectorAll('[data-category-id]');
+        
+        if (remainingCards.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'col-span-full';
+            emptyState.innerHTML = `
+                <div class="text-center py-12">
+                    <i class="fas fa-tags text-6xl text-gray-400 mb-4"></i>
+                    <h5 class="text-xl font-semibold text-gray-600 mb-2">No categories found</h5>
+                    <p class="text-gray-500 mb-4">Start by creating your first category to organize your expenses.</p>
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition modal-trigger" data-modal="addCategoryModal">
+                        <i class="fas fa-plus mr-2"></i> Create First Category
+                    </button>
                 </div>
             `;
+            grid.appendChild(emptyState);
         }
     }
 }
 
-// Update statistics (placeholder - would need server-side data in real implementation)
+// Helper function to update statistics
 function updateStatistics() {
-    // In a real implementation, you might want to fetch updated statistics from the server
-    const totalCategories = document.querySelectorAll('[data-category-id]').length;
+    // This would typically fetch updated statistics from the server
+    // For now, we'll update based on current DOM state
+    const categoryCards = document.querySelectorAll('[data-category-id]');
+    const totalCount = categoryCards.length;
     
-    // Update total categories count
-    const totalCategoriesElement = document.getElementById('totalCategoriesCount');
-    if (totalCategoriesElement) {
-        totalCategoriesElement.textContent = totalCategories;
+    let activeCount = 0;
+    let unusedCount = 0;
+    let mostUsedCategory = 'None';
+    let maxExpenses = 0;
+    
+    categoryCards.forEach(card => {
+        const expensesText = card.querySelector('.fas.fa-receipt').parentElement.textContent;
+        const expensesCount = parseInt(expensesText.match(/\d+/)[0]) || 0;
+        
+        if (expensesCount > 0) {
+            activeCount++;
+            if (expensesCount > maxExpenses) {
+                maxExpenses = expensesCount;
+                mostUsedCategory = card.querySelector('h6.font-semibold').textContent;
+            }
+        } else {
+            unusedCount++;
+        }
+    });
+    
+    // Update statistics cards
+    document.getElementById('totalCategoriesCount').textContent = totalCount;
+    document.getElementById('activeCategoriesCount').textContent = activeCount;
+    document.getElementById('unusedCategoriesCount').textContent = unusedCount;
+    
+    const mostUsedElement = document.querySelector('.bg-cyan-600 h4');
+    if (mostUsedElement) {
+        mostUsedElement.textContent = mostUsedCategory;
     }
-    
-    // For now, we'll just update the total count since we don't have expense data in frontend
-    // In a real implementation, you would fetch these from the server
 }
 
-// Toast notification function
+// Toast notification system
 function showToast(message, type = 'info') {
     const toastContainer = document.getElementById('toastContainer');
-    const toastId = 'toast_' + Date.now();
+    const toast = document.createElement('div');
     
-    const bgClass = type === 'success' ? 'bg-success' : 
-                   type === 'error' ? 'bg-danger' : 
-                   type === 'warning' ? 'bg-warning' : 'bg-info';
+    const bgColor = type === 'success' ? 'bg-green-500' : 
+                   type === 'error' ? 'bg-red-500' : 
+                   type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500';
     
-    const toastHTML = `
-        <div id="${toastId}" class="toast ${bgClass} text-white" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        </div>
+    const icon = type === 'success' ? 'fas fa-check-circle' : 
+                type === 'error' ? 'fas fa-exclamation-circle' : 
+                type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+    
+    toast.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 transform translate-x-full transition-transform duration-300`;
+    toast.innerHTML = `
+        <i class="${icon}"></i>
+        <span class="flex-1">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200">
+            <i class="fas fa-times"></i>
+        </button>
     `;
     
-    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
-    const toastElement = new bootstrap.Toast(document.getElementById(toastId));
-    toastElement.show();
+    toastContainer.appendChild(toast);
     
-    // Remove toast element after it's hidden
-    document.getElementById(toastId).addEventListener('hidden.bs.toast', function() {
-        this.remove();
+    // Animate in
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 300);
+    }, 5000);
+}
+
+// Close modals when clicking outside
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('modal')) {
+        const modalId = event.target.id;
+        closeModal(modalId);
+    }
+});
+
+// Close modals with Escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const openModals = document.querySelectorAll('.modal:not(.hidden)');
+        openModals.forEach(modal => {
+            closeModal(modal.id);
+        });
+    }
+});
+
+// Initialize category colors on page load
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCategoryColors();
+});
+
+// Function to set category colors from data attributes
+function initializeCategoryColors() {
+    const categoryColorElements = document.querySelectorAll('.category-color');
+    categoryColorElements.forEach(element => {
+        const color = element.getAttribute('data-color');
+        if (color) {
+            element.style.backgroundColor = color;
+        }
     });
 }
 </script>
+
+<style>
+.category-color {
+    background-color: #6b7280; /* Default gray color as fallback */
+}
+</style>
 @endsection
