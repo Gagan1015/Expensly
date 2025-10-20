@@ -15,4 +15,12 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: undefined,
+            },
+        },
+    },
+    base: process.env.VITE_ASSET_URL || (process.env.NODE_ENV === 'production' ? 'https://expansly.app/' : '/'),
 });
