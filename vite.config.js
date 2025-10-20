@@ -22,5 +22,9 @@ export default defineConfig({
             },
         },
     },
-    base: process.env.VITE_ASSET_URL || (process.env.NODE_ENV === 'production' ? 'https://expansly.app/' : '/'),
+    server: {
+        hmr: {
+            host: 'localhost',
+        },
+    },
 });
