@@ -1,6 +1,6 @@
 /* Modern Dashboard Styles */
 :root {
-  --primary-color: #0891b2;
+  --primary-color: #1c50a7;
   --secondary-color: #f97316;
   --success-color: #10b981;
   --danger-color: #ef4444;
@@ -32,7 +32,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 20% 80%, rgba(8, 145, 178, 0.1) 0%, transparent 50%),
+  background: radial-gradient(circle at 20% 80%, rgba(28, 80, 167, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
   pointer-events: none;
 }
@@ -151,7 +151,7 @@
 }
 
 .stat-icon-primary {
-  background: rgba(8, 145, 178, 0.1);
+  background: rgba(28, 80, 167, 0.1);
   color: var(--primary-color);
 }
 
@@ -246,12 +246,12 @@
 }
 
 .nav-tabs .nav-link:hover {
-  background: rgba(8, 145, 178, 0.1);
+  background: rgba(28, 80, 167, 0.1);
   color: var(--primary-color);
 }
 
 .nav-tabs .nav-link.active {
-  background: rgba(8, 145, 178, 0.1);
+  background: rgba(28, 80, 167, 0.1);
   color: var(--primary-color);
   border-bottom: 2px solid var(--primary-color);
 }
@@ -277,7 +277,7 @@
 }
 
 .transaction-item:hover {
-  background: rgba(8, 145, 178, 0.05);
+  background: rgba(28, 80, 167, 0.05);
   border-radius: 12px;
   padding-left: 1rem;
   padding-right: 1rem;
@@ -318,7 +318,7 @@
 }
 
 .transaction-category {
-  background: rgba(8, 145, 178, 0.1);
+  background: rgba(28, 80, 167, 0.1);
   color: var(--primary-color);
   padding: 0.125rem 0.5rem;
   border-radius: 6px;
@@ -446,7 +446,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-color), #0ea5e9);
+  background: linear-gradient(135deg, var(--primary-color), #2563eb);
   color: white;
   box-shadow: var(--shadow-md);
 }
@@ -454,7 +454,7 @@
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
-  background: linear-gradient(135deg, #0ea5e9, var(--primary-color));
+  background: linear-gradient(135deg, #2563eb, var(--primary-color));
 }
 
 .btn-outline-primary {

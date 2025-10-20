@@ -1,6 +1,6 @@
 /* Modern Dashboard Styles */
 :root {
-  --primary-color: #0891b2;
+  --primary-color: #1c50a7;
   --secondary-color: #f97316;
   --success-color: #10b981;
   --danger-color: #ef4444;
@@ -142,79 +142,18 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
   justify-content: center;
   font-size: 1rem;
 }
 
 .stat-icon-primary {
-  background: rgba(8, 145, 178, 0.1);
+  background: rgba(28, 80, 167, 0.1);
   color: var(--primary-color);
 }
 
 .stat-icon-secondary {
   background: rgba(249, 115, 22, 0.1);
   color: var(--secondary-color);
-}
-
-.stat-icon-accent {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success-color);
-}
-
-.stat-icon-success {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--danger-color);
-}
-
-.stat-value {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--dark-color);
-  margin-bottom: 0.5rem;
-}
-
-.stat-trend {
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.trend-up {
-  color: var(--danger-color);
-}
-
-.trend-down {
-  color: var(--success-color);
-}
-
-/* Chart Container */
-.chart-container {
-  position: relative;
-  height: 300px;
-  margin-top: 1rem;
-}
-
-/* Transaction Items */
-.transaction-item {
-  display: flex;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
-  transition: all 0.3s ease;
-}
-
-.transaction-item:last-child {
-  border-bottom: none;
-}
-
-.transaction-item:hover {
-  background: rgba(8, 145, 178, 0.05);
-  border-radius: 12px;
-  padding-left: 1rem;
-  padding-right: 1rem;
 }
 
 .transaction-icon {
@@ -402,7 +341,7 @@
 }
 
 .quick-action-btn.primary .quick-action-icon {
-  background: linear-gradient(135deg, var(--primary-color), #0ea5e9);
+  background: linear-gradient(135deg, var(--primary-color), #2563eb);
   color: white;
 }
 
@@ -481,7 +420,7 @@
 }
 
 .category-item:hover {
-  background: rgba(8, 145, 178, 0.05);
+  background: rgba(28, 80, 167, 0.05);
   border-radius: 8px;
   padding-left: 0.75rem;
   padding-right: 0.75rem;

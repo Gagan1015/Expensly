@@ -15,10 +15,10 @@
             </div>
         </div>
 
-        <!-- Bento Grid Layout -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6 mb-8">
-            <!-- This Month - Large Card -->
-            <div class="lg:col-span-2 xl:col-span-2">
+        <!-- Stats Cards Grid - 4 Equal Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- This Month -->
+            <div>
                 <div class="stat-card h-full">
                     <div class="stat-card-header">
                         <div class="stat-card-title">This Month</div>
@@ -37,7 +37,7 @@
             </div>
 
             <!-- This Week -->
-            <div class="lg:col-span-1 xl:col-span-1">
+            <div>
                 <div class="stat-card h-full">
                     <div class="stat-card-header">
                         <div class="stat-card-title">This Week</div>
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Today -->
-            <div class="lg:col-span-1 xl:col-span-1">
+            <div>
                 <div class="stat-card h-full">
                     <div class="stat-card-header">
                         <div class="stat-card-title">Today</div>
@@ -74,33 +74,20 @@
                 </div>
             </div>
 
-            <!-- Budget Left - Tall Card -->
-            <div class="lg:col-span-2 xl:col-span-2 lg:row-span-2">
+            <!-- Budget Overview -->
+            <div>
                 <div class="stat-card h-full">
                     <div class="stat-card-header">
-                        <div class="stat-card-title">Budget Overview</div>
+                        <div class="stat-card-title">Budget</div>
                         <div class="stat-icon stat-icon-success">
                             <i class="fas fa-bullseye"></i>
                         </div>
                     </div>
                     <div class="stat-card-body">
-                        <div class="text-center mb-6">
-                            <div class="budget-circle mx-auto" data-percentage="{{ $budget['percentage'] ?? 0 }}">
-                                <div class="budget-percentage">{{ number_format($budget['percentage'] ?? 0, 1) }}%</div>
-                                <div class="budget-label">Used</div>
-                            </div>
-                        </div>
-                        <div class="stat-value text-center mb-4">₹{{ number_format($budget['remaining'] ?? 15000) }}</div>
-                        <div class="text-center text-sm text-gray-500 mb-4">{{ 100 - ($budget['percentage'] ?? 75) }}% remaining</div>
-                        <div class="grid grid-cols-2 gap-4 text-center">
-                            <div class="budget-stat">
-                                <div class="budget-stat-value text-sm">₹{{ number_format($budget['monthly'] ?? 0) }}</div>
-                                <div class="budget-stat-label">Total Budget</div>
-                            </div>
-                            <div class="budget-stat">
-                                <div class="budget-stat-value text-sm">₹{{ number_format($budget['used'] ?? 0) }}</div>
-                                <div class="budget-stat-label">Used</div>
-                            </div>
+                        <div class="stat-value mb-2">{{ number_format($budget['percentage'] ?? 0, 1) }}%</div>
+                        <div class="stat-trend mb-3">
+                            <i class="fas fa-{{ ($budget['percentage'] ?? 0) > 80 ? 'exclamation-triangle' : 'check-circle' }}"></i>
+                            {{ 100 - ($budget['percentage'] ?? 0) }}% remaining
                         </div>
                     </div>
                 </div>
@@ -262,7 +249,7 @@
 </div>
 
 <!-- Budget Modal -->
-<div id="budgetModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+<div id="budgetModal" class="fixed inset-0 bg-white/10 backdrop-blur-sm overflow-y-auto h-full w-full z-50 hidden">
     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
         <div class="flex justify-between items-center pb-3">
             <h5 class="text-lg font-semibold text-gray-900">

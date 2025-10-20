@@ -21,7 +21,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          @click="sidebarOpen = false"
-         class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"></div>
+         class="fixed inset-0 bg-white/10 backdrop-blur-sm z-40 lg:hidden"></div>
 
     <!-- Sidebar -->
     <div x-show="sidebarOpen || window.innerWidth >= 1024"
@@ -32,10 +32,12 @@
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="-translate-x-full"
          :class="sidebarCollapsed ? 'w-16' : 'w-64'"
-         class="sidebar-fixed bg-gradient-to-b from-blue-600 to-blue-800 shadow-xl transition-all duration-300 ease-in-out">
+         class="sidebar-fixed shadow-xl transition-all duration-300 ease-in-out"
+         style="background: linear-gradient(to bottom, #1c50a7, #153d7f);">
         
         <!-- Sidebar Header -->
-        <div class="flex items-center justify-between h-16 px-4 border-b border-blue-500/30">
+        <div class="flex items-center justify-between h-16 px-4 border-b"
+             style="border-color: rgba(28, 80, 167, 0.3);">
             <a href="{{ route('landing') }}" 
                :class="sidebarCollapsed ? 'justify-center' : 'justify-start'"
                class="flex items-center gap-3 text-white hover:opacity-80 transition-opacity">
@@ -175,7 +177,10 @@
 
     <!-- Mobile Sidebar Toggle -->
     <button @click="sidebarOpen = !sidebarOpen"
-            class="fixed top-4 left-4 z-[60] lg:hidden flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors">
+            class="fixed top-4 left-4 z-[60] lg:hidden flex items-center justify-center w-10 h-10 text-white rounded-lg shadow-lg transition-colors"
+            style="background-color: #1c50a7;"
+            onmouseover="this.style.backgroundColor='#153d7f'"
+            onmouseout="this.style.backgroundColor='#1c50a7'">
         <svg x-show="!sidebarOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>

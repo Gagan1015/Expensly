@@ -113,7 +113,7 @@
 </div>
 
 <!-- Add Category Modal -->
-<div id="addCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+<div id="addCategoryModal" class="modal hidden fixed inset-0 bg-white/10 backdrop-blur-sm z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
             <h5 class="text-xl font-semibold text-gray-800">Add New Category</h5>
@@ -151,7 +151,7 @@
 </div>
 
 <!-- Edit Category Modal -->
-<div id="editCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+<div id="editCategoryModal" class="modal hidden fixed inset-0 bg-white/10 backdrop-blur-sm z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
             <h5 class="text-xl font-semibold text-gray-800">Edit Category</h5>
@@ -190,7 +190,7 @@
 </div>
 
 <!-- View Category Modal -->
-<div id="viewCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+<div id="viewCategoryModal" class="modal hidden fixed inset-0 bg-white/10 backdrop-blur-sm z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
             <h5 class="text-xl font-semibold text-gray-800">Category Details</h5>
@@ -237,7 +237,7 @@
 </div>
 
 <!-- Delete Category Modal -->
-<div id="deleteCategoryModal" class="modal hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center">
+<div id="deleteCategoryModal" class="modal hidden fixed inset-0 bg-white/10 backdrop-blur-sm z-50 flex items-center justify-center">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
         <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
             <h5 class="text-xl font-semibold text-red-600">Delete Category</h5>

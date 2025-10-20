@@ -72,14 +72,14 @@
             @include('components.sidebar')
             
             <!-- Main Content Area -->
-            <div class="main-content-with-sidebar"
+            <div class="main-content-with-sidebar relative"
                  :class="sidebarCollapsed ? 'collapsed' : ''">
                 
                 <!-- Modern Navbar Component -->
                 @include('components.navbar')
                 
                 <!-- Page Content -->
-                <main class="min-h-screen bg-gray-50">
+                <main class="min-h-screen bg-gray-50 relative">
                     <div class="px-4 sm:px-6 lg:px-8 py-6">
                         @yield('content')
                     </div>
