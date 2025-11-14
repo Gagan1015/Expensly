@@ -1,0 +1,27 @@
+{
+  "name": "Expensly",
+  "description": "Expense tracking application built with Laravel",
+  "keywords": ["laravel", "php", "expense-tracker"],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/php"
+    }
+  ],
+  "env": {
+    "APP_KEY": {
+      "description": "Laravel application key (will be generated)",
+      "generator": "secret"
+    },
+    "APP_ENV": {
+      "description": "Application environment",
+      "value": "production"
+    },
+    "APP_DEBUG": {
+      "description": "Debug mode",
+      "value": "false"
+    }
+  }
+}
