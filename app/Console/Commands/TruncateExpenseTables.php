@@ -37,8 +37,16 @@ class TruncateExpenseTables extends Command
         $this->info('Starting to truncate expense-related tables...');
 
         try {
-            // Disable foreign key checks
-            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            // Check database driver
+            $driver = DB::connection()->getDriverName();
+            
+            // Disable foreign key checks based on database type
+            if ($driver === 'mysql') {
+                DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            } elseif ($driver === 'pgsql') {
+                // PostgreSQL doesn't have a simple foreign key check disable
+                // We'll use CASCADE instead
+            }
 
             // List of tables to truncate (in order to handle foreign keys)
             $tables = [
@@ -48,23 +56,30 @@ class TruncateExpenseTables extends Command
 
             foreach ($tables as $table) {
                 if (Schema::hasTable($table)) {
-                    DB::table($table)->truncate();
+                    if ($driver === 'pgsql') {
+                        // PostgreSQL syntax with CASCADE
+                        DB::statement("TRUNCATE TABLE {$table} RESTART IDENTITY CASCADE");
+                    } else {
+                        // MySQL/SQLite
+                        DB::table($table)->truncate();
+                    }
                     $this->info("✓ Truncated table: {$table}");
                 } else {
                     $this->warn("⚠ Table not found: {$table}");
                 }
             }
 
-            // Re-enable foreign key checks
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            // Re-enable foreign key checks for MySQL
+            if ($driver === 'mysql') {
+                DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+            }
 
             $this->info('✅ All expense-related tables have been truncated successfully!');
             
             // Suggest next steps
             $this->newLine();
             $this->info('💡 Next steps:');
-            $this->info('   - Run: php artisan migrate:refresh --path=/database/migrations/2025_09_21_095045_create_categories_table.php');
-            $this->info('   - Run: php artisan migrate:refresh --path=/database/migrations/2025_09_21_095049_create_expenses_table.php');
+            $this->info('   - Run: php artisan migrate:refresh');
             $this->info('   - Or run: php artisan db:seed to add sample data');
 
         } catch (\Exception $e) {
